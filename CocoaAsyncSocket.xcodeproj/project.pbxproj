@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		85AB7A731D834D1A006EE8B5 /* iOS CocoaAsyncSocket-Universal */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 85AB7A741D834D1A006EE8B5 /* Build configuration list for PBXAggregateTarget "iOS CocoaAsyncSocket-Universal" */;
+			buildPhases = (
+				85AB7A771D834D1F006EE8B5 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "iOS CocoaAsyncSocket-Universal";
+			productName = "iOS CocoaAsyncSocket-Universal";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		6C55C7D31B7838B1006A7440 /* CocoaAsyncSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C55C7D11B7838B1006A7440 /* CocoaAsyncSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6CD990301B7789680011A685 /* GCDAsyncSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 6CD9902C1B7789680011A685 /* GCDAsyncSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -241,6 +255,9 @@
 					7D8B70C31BCFA15700D8E273 = {
 						CreatedOnToolsVersion = 7.1;
 					};
+					85AB7A731D834D1A006EE8B5 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
 					9FC41F121B9D965000578BEB = {
 						CreatedOnToolsVersion = 6.4;
 					};
@@ -261,6 +278,7 @@
 				6CD9900F1B77868C0011A685 /* iOS CocoaAsyncSocket */,
 				9FC41F121B9D965000578BEB /* Mac CocoaAsyncSocket */,
 				7D8B70C31BCFA15700D8E273 /* tvOS CocoaAsyncSocket */,
+				85AB7A731D834D1A006EE8B5 /* iOS CocoaAsyncSocket-Universal */,
 			);
 		};
 /* End PBXProject section */
@@ -288,6 +306,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		85AB7A771D834D1F006EE8B5 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "######################\n# Options\n######################\n\nREVEAL_ARCHIVE_IN_FINDER=false\n\nFRAMEWORK_NAME=\"${PROJECT_NAME}\"\n\nSIMULATOR_LIBRARY_PATH=\"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${FRAMEWORK_NAME}.framework\"\n\nDEVICE_LIBRARY_PATH=\"${BUILD_DIR}/${CONFIGURATION}-iphoneos/${FRAMEWORK_NAME}.framework\"\n\nUNIVERSAL_LIBRARY_DIR=\"${BUILD_DIR}/${CONFIGURATION}-iphoneuniversal\"\n\nFRAMEWORK=\"${UNIVERSAL_LIBRARY_DIR}/${FRAMEWORK_NAME}.framework\"\n\n######################\n# Build Frameworks\n######################\n\nxcodebuild -project ${PROJECT_NAME}.xcodeproj -scheme \"iOS Framework\" -sdk iphonesimulator -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-iphonesimulator 2>&1\n\nxcodebuild -project ${PROJECT_NAME}.xcodeproj -scheme \"iOS Framework\" -sdk iphoneos -configuration ${CONFIGURATION} clean build CONFIGURATION_BUILD_DIR=${BUILD_DIR}/${CONFIGURATION}-iphoneos 2>&1\n\n\n######################\n# Create directory for universal\n######################\n\nrm -rf \"${UNIVERSAL_LIBRARY_DIR}\"\n\nmkdir \"${UNIVERSAL_LIBRARY_DIR}\"\n\nmkdir \"${FRAMEWORK}\"\n\n######################\n# Copy files Framework\n######################\n\necho \"${DEVICE_LIBRARY_PATH}\"\n\ncp -r \"${DEVICE_LIBRARY_PATH}/.\" \"${FRAMEWORK}\"\n\n######################\n# Make an universal binary\n######################\n\nlipo \"${SIMULATOR_LIBRARY_PATH}/${FRAMEWORK_NAME}\" \"${DEVICE_LIBRARY_PATH}/${FRAMEWORK_NAME}\" -create -output \"${FRAMEWORK}/${FRAMEWORK_NAME}\" | echo\n\n# For Swift framework, Swiftmodule needs to be copied in the universal framework\nif [ -d \"${SIMULATOR_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" ]; then\ncp -f \"${SIMULATOR_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule/*\" \"${FRAMEWORK}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" | echo\nfi\n\nif [ -d \"${DEVICE_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" ]; then\ncp -f \"${DEVICE_LIBRARY_PATH}/Modules/${FRAMEWORK_NAME}.swiftmodule/*\" \"${FRAMEWORK}/Modules/${FRAMEWORK_NAME}.swiftmodule/\" | echo\nfi\n\n######################\n# On Release, copy the result to release directory\n######################\nOUTPUT_DIR=\"${PROJECT_DIR}/Output/${FRAMEWORK_NAME}-${CONFIGURATION}-iphoneuniversal/\"\n\nrm -rf \"$OUTPUT_DIR\"\nmkdir -p \"$OUTPUT_DIR\"\n\ncp -r \"${FRAMEWORK}\" \"$OUTPUT_DIR\"\n\nif [ ${REVEAL_ARCHIVE_IN_FINDER} = true ]; then\nopen \"${OUTPUT_DIR}/\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6CD9900B1B77868C0011A685 /* Sources */ = {
@@ -520,6 +554,20 @@
 			};
 			name = Release;
 		};
+		85AB7A751D834D1A006EE8B5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		85AB7A761D834D1A006EE8B5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		9FC41F271B9D965000578BEB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -590,6 +638,15 @@
 			buildConfigurations = (
 				7D8B70C91BCFA15700D8E273 /* Debug */,
 				7D8B70CA1BCFA15700D8E273 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		85AB7A741D834D1A006EE8B5 /* Build configuration list for PBXAggregateTarget "iOS CocoaAsyncSocket-Universal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				85AB7A751D834D1A006EE8B5 /* Debug */,
+				85AB7A761D834D1A006EE8B5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
